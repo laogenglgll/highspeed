@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.er.dao.DriverMapper">
+	<!-- 查询所哟的驾驶员 -->
+	<select id="getAll" resultType="driver">
+		select *
+		from driver
+	</select>
+	
+	<!-- 充值 -->
+	<update id="addTel">
+		update driver set tel=tel +#{addtel}
+		where dno = #{dno}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="del" parameterType="String">
+		delete from driver
+		where dno = #{dno}
+	</delete>
+	
+	<!-- 增加 -->
+	<insert id="addJsy" parameterType="driver">
+		insert into driver values(#{dno},#{dname},#{idcard},#{sex},null,#{tel},#{money},#{backup},now())
+	</insert>
+	
+	<update id="update" parameterType="driver">
+		update driver set dname=#{dname},idcard=#{idcard},sex=#{sex},tel=#{tel},money=#{money},backup=#{backup}
+		where dno=#{dno}
+	</update>
+	<!-- 根据名字查询 -->
+	<select id="validname" parameterType="String" resultType="driver">
+		select * from driver
+		where dname = #{dname}
+	</select>
+	
+	<select id="getByDno" parameterType="int" resultType="driver">
+		select *
+		from driver
+		where dno = #{dno}
+	</select>
+	
+	<select id="GetByCno" parameterType="String" resultType="driver">
+		select *
+		from driver
+		where dno = (
+			select dno from car where cno = #{cno}
+		)
+	</select>
+</mapper>

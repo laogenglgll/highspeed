@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.er.dao.FeereCordStationMapper">
+	<resultMap type="feereCordStation" id="map1">
+		<association property="in"
+		column="beginid"
+		javaType="station"
+		select="com.er.dao.StationMapper.getById"	>
+		</association>
+		<association property="out"
+		column="endid"
+		javaType="station"
+		select="com.er.dao.StationMapper.getById"
+		></association>
+	</resultMap>
+	<!-- 无论进出站 -->
+	<select id="findAll" resultMap="map1">
+		select *
+		from feerecord
+		where state !=2
+	</select>
+	<!-- 入站 -->
+	<insert id="insert" parameterType="feereCordStation">
+		insert into feerecord(cno,beginid,state,createtime)
+		values(#{cno},#{beginid},0,now())
+	</insert>
+	
+	<!-- 费用 -->
+	<select id="fee" parameterType="java.util.Map" resultType="int">
+		select sum(price)
+		from station
+		where sid <![CDATA[>]]> #{minid} and sid <![CDATA[<=]]> #{maxid}
+	</select>
+	
+	<!-- 修改站点，出站。根据fid -->
+	<update id="updateOut" parameterType="feereCordStation">
+		update feerecord set endid=#{endid},price=#{price},state = 1
+		where fid=#{fid}	
+	</update>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.er.dao.CarMapper">
+	<!-- 查询所有的car -->
+	<select id="getAllCar" resultType="car">
+		select *
+		from car
+	</select>
+	
+	<!-- 查询可进站的 car -->
+	<select id="getNotInCar" resultType="car">
+		select *
+		from car
+		where cno not in
+			(select cno from feerecord where state != 0)
+	</select>
+	<!-- 根据cno查询 -->
+	<select id="getByCno" parameterType="int" resultType="car">
+		select *
+		from car
+		where cno = #{cno}
+	</select>
+	
+	<insert id="insertCar" parameterType="car">
+		insert into car values(
+		#{cno},#{cname},#{dno},null,now()
+		)
+	</insert>
+	
+	<delete id="del" parameterType="String">
+		delete from car
+		where cno  = #{cno}
+	</delete>
+	
+	<!-- 修改  -->
+	<update id="updateCar" parameterType="car">
+		update car set cname=#{cname},dno = #{dno},backup=#{backup}
+		where cno = #{cno}
+	</update>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.er.dao.UserMapper">
+	
+	<!--根据姓名查询是否存在该用户 -->
+	<select id="selectByUname" parameterType="String" resultType="user">
+		select *
+		from user
+		where uname = #{uname}
+	</select>
+	
+	<update id="update">
+		update user set uimg = #{name}
+		where uid = #{uid}
+	</update>
+	
+	<update id="updateUser">
+		update user set pwd = #{newPassWord}
+		where uid = #{uid}
+	</update>
+	<!-- 查询用户 -->
+	<select id="getPwd" parameterType="int" resultType="String">
+		select pwd
+		from user
+		where uid = #{uid}
+	</select>
+</mapper>

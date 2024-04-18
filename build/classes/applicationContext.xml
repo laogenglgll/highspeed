@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+	<!-- 自动扫描包 -->
+	<context:component-scan base-package="com.er"></context:component-scan>
+	<!-- <context:property-placeholder location="classpath:db.properties"/> -->
+	
+	<!-- 配置 数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3309/highspeed?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;serverTimezone=UTC" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+	
+	<!-- mybatis的SqlSession的工厂:SqlSessionFactoryBean;引用数据源：dataSource；MyBatis加载配置 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 给实体类起别名的包 -->
+		<property name="typeAliasesPackage" value="com.er.pojo"/>
+		<property name="configLocation" value="classpath:SqlMapConfig.xml"></property>
+		<!-- mybatis的翻页组件 -->
+		<property name="plugins">
+			<bean class="com.github.pagehelper.PageInterceptor"/>
+		</property>
+		
+	</bean>
+	
+	<!-- 创建Mapper代理类（dao层的接口和映射文件.xml）
+	     1. 接口和映射文件在同一个包下
+	     2. 接口名和映射文件名字相同-->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.er.dao"></property>
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 事务管理： -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 使用声明式事务 , 可以使用事务管理的注解    ,加在 Service的类上， @Transactional -->
+	<tx:annotation-driven transaction-manager="txManager"/>
+	</beans>
+
